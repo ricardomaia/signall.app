@@ -17,7 +17,9 @@
  ---
  
  a) Informação pessoal (CPF, e-mail ou algum dado biométrico).
+ 
  b) Algo que o signatário sabe + algo que o signatário tem.
+ 
  c) Message Digest e Carimbo de Tempo.
   
  Incluir na assinatura ato do titular do órgão conforme art 5º
