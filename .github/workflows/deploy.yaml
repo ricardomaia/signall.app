@@ -1,6 +1,10 @@
 name: Node CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - develop
 
 jobs:
   build:
@@ -8,20 +12,33 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
           node-version: "10.x"
+
       - name: Install npm dependencies
         run: npm install
+
       - name: Run build task
         run: npx next build && npx next export
-      - name: Deploy to Server
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
-          ARGS: "-rltgoDzvO --delete"
-          SOURCE: "out/"
-          REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
-          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
-          TARGET: ${{ secrets.DEPLOY_TARGET }}
+
+      ## Build & Deploy Dev
+      - name: Build & Deploy Dev
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          npm install -g surge
+          surge ./build https://signallapp.surge.sh/ --token ${{secrets.SURGE_TOKEN}}
+
+      ## Build & Deploy Production
+      - name: Build & Deploy Production
+        if: github.ref == 'refs/heads/master'
+          uses: easingthemes/ssh-deploy@v2.1.5
+          env:
+            SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+            ARGS: "-rltgoDzvO --delete"
+            SOURCE: "out/"
+            REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
+            REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+            TARGET: ${{ secrets.DEPLOY_TARGET }}
