@@ -29,7 +29,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         run: |
           npm install -g surge
-          surge ./build https://signallapp.surge.sh/ --token ${{secrets.SURGE_TOKEN}}
+          surge ./out https://signallapp.surge.sh/ --token ${{secrets.SURGE_TOKEN}}
 
       ## Build & Deploy Production
       - name: Build & Deploy Production
